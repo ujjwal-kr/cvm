@@ -1,2 +1,2 @@
-main: main.c
-	cc main.c -o ./build/main
+main: main.h add.c main.c
+	cc main.c add.c -o ./build/main
