@@ -19,5 +19,12 @@ int main(void)
     objs[69]->data = new_addr;
     Object *o = (struct Object *)objs[69];
     printf("%p\n", o->data);
+
+    for (int i = 0; i < 100; i++) 
+    {
+        // swapping these returns a segfault
+        free(objs[i]->data);
+        free(objs[i]);
+    }
     return 0;
 }
