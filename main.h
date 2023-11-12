@@ -5,6 +5,7 @@
 #include <inttypes.h>
 #include <sys/random.h>
 #include <string.h>
+#include <assert.h>
 
 int add(int a, int b);
 

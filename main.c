@@ -8,7 +8,9 @@ int main(void)
     for (int i = 0; i < 100; i++)
     {
         Object *obj = malloc(sizeof(Object));
+        assert(obj != NULL);
         obj->data = malloc(random_bytes[i] + 1);
+        assert(obj->data != NULL);
         strcpy(obj->data, "H\n");
         obj->size = random_bytes[i] + 1;
         objs[i] = obj;
