@@ -7,10 +7,6 @@ int main(void)
     Object *objs[100];
     for (int i = 0; i < 100; i++)
     {
-        // Object obj = {data : NULL, size : random_bytes[i]};
-        // obj.data = malloc(obj.size);
-        // objs[i] = &obj;
-
         Object *obj = malloc(sizeof(Object));
         obj->data = malloc(random_bytes[i] + 1);
         strcpy(obj->data, "H\n");
@@ -19,8 +15,9 @@ int main(void)
     }
 
     printf("%p\n", objs[69]->data);
-    void *new_addr = realloc(objs[69]->data, objs[69]->size + 1);
+    void *new_addr = realloc(objs[69]->data, objs[69]->size + 16);
     objs[69]->data = new_addr;
-    printf("%p\n", objs[69]->data);
+    Object *o = (struct Object *)objs[69];
+    printf("%p\n", o->data);
     return 0;
 }
