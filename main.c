@@ -2,7 +2,7 @@
 
 int main(void)
 {
-    uint16_t random_bytes[100];
+    uint8_t random_bytes[100];
     getrandom(&random_bytes, sizeof(random_bytes), 0);
     Object *objs[100];
     for (int i = 0; i < 100; i++)
@@ -12,14 +12,15 @@ int main(void)
         // objs[i] = &obj;
 
         Object *obj = malloc(sizeof(Object));
-        obj->data = malloc(random_bytes[i]);
-        obj->size = random_bytes[i];
+        obj->data = malloc(random_bytes[i] + 1);
+        strcpy(obj->data, "H\n");
+        obj->size = random_bytes[i] + 1;
         objs[i] = obj;
     }
 
-    for (int i = 0; i < 100; i++)
-    {
-        printf("Size of Object %d is %ld \n", i, objs[i]->size);
-    }
+    printf("%p\n", objs[69]->data);
+    void *new_addr = realloc(objs[69]->data, objs[69]->size + 1);
+    objs[69]->data = new_addr;
+    printf("%p\n", objs[69]->data);
     return 0;
 }
