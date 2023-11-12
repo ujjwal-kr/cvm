@@ -16,17 +16,21 @@ int main(void)
         objs[i] = (obj + i);
     }
 
+    for (int i = 0; i < 100; i++)
+    {
+        printf("Pointer to data %d: %p and String: %s", i, (obj + i)->data, (char *)(obj + i)->data);
+    }
+
     printf("%p\n", objs[69]->data);
     void *new_addr = realloc(objs[69]->data, objs[69]->size + 16);
     objs[69]->data = new_addr;
     Object *o = (struct Object *)objs[69];
     printf("%p\n", o->data);
 
-    // for (int i = 0; i < 100; i++)
-    // {
-    //     // swapping these results in a segfault
-    //     free(objs[i]->data);
-    //     free(objs[i]);
-    // }
+    for (int i = 0; i < 100; i++)
+    {
+        free((obj + i)->data);
+    }
+    free(obj);
     return 0;
 }
