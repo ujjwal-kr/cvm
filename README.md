@@ -27,10 +27,4 @@ Experimenting with the C runtime environment, while trying to reimplement most u
 - fprintf
 - fscanf
 
-### Process Handling
-- fork
-- exec
-- wait
-- exit
-
 A work in progress by [@ujjwal-kr](https://github.com/ujjwal-kr)
