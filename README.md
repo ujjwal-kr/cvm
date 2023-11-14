@@ -8,6 +8,7 @@ Experimenting with the C runtime environment, while trying to reimplement most u
 - malloc
 - calloc
 - realloc
+- free
 
 ### IO
 - printf
