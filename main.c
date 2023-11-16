@@ -35,5 +35,7 @@ int main(void)
     // free(obj);
     // return 0;
 
-    new_segment();
+    Object *obj = malloc(sizeof(obj));
+    printf("%ld\n", sizeof(*obj));
+    return 0;
 }
