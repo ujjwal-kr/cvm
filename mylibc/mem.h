@@ -1,10 +1,8 @@
 #include <stddef.h>
 #include <sys/mman.h>
-#include <stdio.h>
-#include <assert.h>
-#include <stdbool.h>
 
 #define SEGMENT_SIZE 0x4000
+#define MAP_ANONYMOUS 0x20 // do not use a file
 
 typedef struct
 {
@@ -12,12 +10,6 @@ typedef struct
     size_t size;
     void *start;
 } Segment;
-
-typedef struct
-{
-    size_t size;
-    void *start;
-} Chunk;
 
 Segment segments[10];
 size_t segment_count = 0;
@@ -41,9 +33,12 @@ void new_segment()
     }
 }
 
-Segment *get_latest_segment()
+// returns the latest segment
+Segment *latest_segment(size_t size)
 {
-    if (segment_count < 1)
+
+    size_t remaining_size = SEGMENT_SIZE - segments[segment_count].size;
+    if (segment_count < 1 || remaining_size < size)
     {
         new_segment();
     }
@@ -54,14 +49,19 @@ Segment *get_latest_segment()
 void *add_chunk(size_t size, Segment *segment)
 {
     void *start = segment[segment_count].start + segment[segment_count].size;
-    segment[segment_count].size = segment[segment_count].size + size;
+    segment[segment_count].size += size;
     return start;
 }
 
 void *malloc(size_t size)
 {
-    return add_chunk(size, get_latest_segment());
+    if (size > SEGMENT_SIZE)
+    {
+        return NULL;
+    }
+    return add_chunk(size, latest_segment(size));
 }
+
 // void free(void *ptr);
 // void *calloc(size_t nmemb, size_t size);
 // void *realloc(void *ptr, size_t size);

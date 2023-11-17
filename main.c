@@ -1,5 +1,6 @@
 #include "main.h"
 #include "mylibc/mem.h"
+// #include <stdlib.h>
 
 int main(void)
 {
@@ -36,6 +37,14 @@ int main(void)
     // return 0;
 
     Object *obj = malloc(sizeof(obj));
-    printf("%ld\n", sizeof(*obj));
-    return 0;
+    Object *obj2 = malloc(sizeof(obj2));
+    printf("%ld\n", obj2 - obj);
+
+    void *a = malloc(40000);
+    void *b = malloc(40000);
+    printf("%p\n", a);
+    printf("%p\n", b);
+
+    printf("%ld\n", a - b);
+   return 0;
 }
