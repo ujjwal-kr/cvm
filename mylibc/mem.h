@@ -35,27 +35,33 @@ void new_segment()
 }
 
 // returns the latest segment
-Segment *latest_segment(size_t size)
+Segment *latest_segment(size_t size, size_t *segment_idx)
 {
     size_t remaining_size = SEGMENT_SIZE - segments[segment_count].size;
     if (segment_count < 1 && segment_init == 1)
     {
         new_segment();
         segment_init = 0;
+        *segment_idx = segment_count;
     }
     else if (remaining_size < size)
     {
         new_segment();
+        *segment_idx = segment_count;
     }
     return &segments[segment_count];
 }
 
 // returns a pointer to the beginning of the chunk in segment
-void *add_chunk(size_t size, Segment *segment)
+void *add_chunk(size_t size, Segment *segment, size_t segment_idx)
 {
     void *start = segment->start + segment->size;
-    segment->size += size;
-    return start;
+    size_t *s = start;
+    s[0] = segment_idx;
+    s[1] = 1; // free bit
+    s[2] = size;
+    segment->size += size + sizeof(size_t) * 3;
+    return start + sizeof(size_t) * 3;
 }
 
 void *malloc(size_t size)
@@ -64,9 +70,22 @@ void *malloc(size_t size)
     {
         return NULL;
     }
-    return add_chunk(size, latest_segment(size));
+    size_t segment_idx;
+    Segment *latest = latest_segment(size, &segment_idx);
+    return add_chunk(size, latest, segment_idx);
 }
 
-// void free(void *ptr);
+void free(void *ptr)
+{
+    size_t *s = ptr - sizeof(size_t);
+    size_t size = (size_t)*s;
+
+    size_t *f = ptr - sizeof(size_t) * 2;
+    size_t free = (size_t)*f;
+
+    size_t *i = ptr - sizeof(size_t) * 3;
+    size_t segment_idx = (size_t)*i;
+}
+
 // void *calloc(size_t nmemb, size_t size);
 // void *realloc(void *ptr, size_t size);

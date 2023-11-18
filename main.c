@@ -36,10 +36,10 @@ int main(void)
     // free(obj);
     // return 0;
 
-    Object *obj = malloc(1);
-    Object *obj2 = malloc(1);
+    Object *obj = malloc(69);
+    Object *obj2 = malloc(20);
+    free(obj2);
 
-    printf("%p\n", obj2); 
-    printf("%p\n", obj); 
+    printf("%ld\n", obj2 - obj); 
     return 0;
 }
