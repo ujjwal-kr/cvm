@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <sys/mman.h>
 
-#define SEGMENT_SIZE 0x4000
+#define SEGMENT_SIZE 0x3e80
 #define MAP_ANONYMOUS 0x20 // do not use a file
 
 typedef struct
@@ -13,6 +13,7 @@ typedef struct
 
 Segment segments[10];
 size_t segment_count = 0;
+int segment_init = 1;
 
 void new_segment()
 {
@@ -27,19 +28,21 @@ void new_segment()
         -1,
         0);
     segments[segment_count] = (Segment)segment;
-    if (segment_count != 0)
+    if (segment_init != 1)
     {
-        segment_count += 1;
+        segment_count++;
     }
 }
 
 // returns the latest segment
 Segment *latest_segment(size_t size)
 {
-
     size_t remaining_size = SEGMENT_SIZE - segments[segment_count].size;
-    if (segment_count < 1 || remaining_size < size)
+    if (segment_count < 1 && segment_init == 1)
     {
+        new_segment();
+        segment_init = 0;
+    } else if (remaining_size < size) {
         new_segment();
     }
     return &segments[segment_count];
@@ -48,8 +51,8 @@ Segment *latest_segment(size_t size)
 // returns a pointer to the beginning of the chunk in segment
 void *add_chunk(size_t size, Segment *segment)
 {
-    void *start = segment[segment_count].start + segment[segment_count].size;
-    segment[segment_count].size += size;
+    void *start = segment->start + size;
+    segment->size += size;
     return start;
 }
 
