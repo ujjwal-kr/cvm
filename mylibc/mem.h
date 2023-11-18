@@ -53,7 +53,7 @@ Segment *latest_segment(size_t size)
 // returns a pointer to the beginning of the chunk in segment
 void *add_chunk(size_t size, Segment *segment)
 {
-    void *start = segment->start + size;
+    void *start = segment->start + segment->size;
     segment->size += size;
     return start;
 }
