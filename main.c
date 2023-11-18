@@ -36,19 +36,8 @@ int main(void)
     // free(obj);
     // return 0;
 
-    Object *obj = malloc(15000);
-    Object *obj2 = malloc(4000);
-
-    Object *o3 = malloc(15000);
-    Object *o4 = malloc(6000);
-    Object *o5 = malloc(15000);
-    Object *o6 = malloc(10000);
-
-    // void *a = malloc(40000);
-    // void *b = malloc(40000);
-    // printf("%p\n", a);
-    // printf("%p\n", b);
-
-    // printf("%ld\n", a - b);
+    Object *obj = malloc(10000);
+    Object *obj2 = malloc(2000);
+    Object *o3 = malloc(3000);
    return 0;
 }

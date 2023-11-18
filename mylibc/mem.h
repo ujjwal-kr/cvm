@@ -42,7 +42,9 @@ Segment *latest_segment(size_t size)
     {
         new_segment();
         segment_init = 0;
-    } else if (remaining_size < size) {
+    }
+    else if (remaining_size < size)
+    {
         new_segment();
     }
     return &segments[segment_count];
