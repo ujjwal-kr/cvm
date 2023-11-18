@@ -42,13 +42,12 @@ Segment *latest_segment(size_t size, size_t *segment_idx)
     {
         new_segment();
         segment_init = 0;
-        *segment_idx = segment_count;
     }
     else if (remaining_size < size)
     {
         new_segment();
-        *segment_idx = segment_count;
     }
+    *segment_idx = segment_count;
     return &segments[segment_count];
 }
 
@@ -58,7 +57,7 @@ void *add_chunk(size_t size, Segment *segment, size_t segment_idx)
     void *start = segment->start + segment->size;
     size_t *s = start;
     s[0] = segment_idx;
-    s[1] = 1; // free bit
+    s[1] = 0; // free bit
     s[2] = size;
     segment->size += size + sizeof(size_t) * 3;
     return start + sizeof(size_t) * 3;
