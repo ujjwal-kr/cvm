@@ -35,7 +35,7 @@ void new_segment()
 }
 
 // returns the latest segment
-Segment *latest_segment(size_t size, size_t *segment_idx)
+Segment *latest_segment(size_t size, char *segment_idx)
 {
     size_t remaining_size = SEGMENT_SIZE - segments[segment_count].size;
     if (segment_count < 1 && segment_init == 1)
@@ -47,20 +47,20 @@ Segment *latest_segment(size_t size, size_t *segment_idx)
     {
         new_segment();
     }
-    *segment_idx = segment_count;
+    *segment_idx = (char)segment_count;
     return &segments[segment_count];
 }
 
 // returns a pointer to the beginning of the chunk in segment
-void *add_chunk(size_t size, Segment *segment, size_t segment_idx)
+void *add_chunk(size_t size, Segment *segment, char segment_idx)
 {
     void *start = segment->start + segment->size;
-    size_t *s = start;
+    char *s = start;
     s[0] = segment_idx;
     s[1] = 0; // free bit
     s[2] = size;
-    segment->size += size + sizeof(size_t) * 3;
-    return start + sizeof(size_t) * 3;
+    segment->size += size + sizeof(char) * 3;
+    return start + sizeof(char) * 3;
 }
 
 void *malloc(size_t size)
@@ -69,21 +69,28 @@ void *malloc(size_t size)
     {
         return NULL;
     }
-    size_t segment_idx;
+    char segment_idx;
     Segment *latest = latest_segment(size, &segment_idx);
     return add_chunk(size, latest, segment_idx);
 }
 
+void get_chunk_props(void *ptr, char *size, char *free, char *index)
+{
+    char *s = ptr - sizeof(char);
+    char *f = ptr - sizeof(char) * 2;
+    char *i = ptr - sizeof(char) * 3;
+    *size = (char)*s;
+    *free = (char)*f;
+    *index = (char)*i;
+}
+
 void free(void *ptr)
 {
-    size_t *s = ptr - sizeof(size_t);
-    size_t size = (size_t)*s;
-
-    size_t *f = ptr - sizeof(size_t) * 2;
-    size_t free = (size_t)*f;
-
-    size_t *i = ptr - sizeof(size_t) * 3;
-    size_t segment_idx = (size_t)*i;
+    char size, free, index;
+    get_chunk_props(ptr, &size, &free, &index);
+    if (free == 1) return;
+    char *f = ptr - sizeof(char) * 2;
+    *f = 1;
 }
 
 // void *calloc(size_t nmemb, size_t size);
