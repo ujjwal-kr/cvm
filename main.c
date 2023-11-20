@@ -37,10 +37,7 @@ int main(void)
     // return 0;
 
     Object *obj = malloc(69);
-    Object *obj2 = malloc(20);
     free(obj);
-    free(obj2);
 
-    printf("%ld\n", obj2 - obj); 
     return 0;
 }

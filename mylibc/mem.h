@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <sys/mman.h>
 
+#define MAX_SEGMENTS 0xa
 #define SEGMENT_SIZE 0x3e80
 #define MAP_ANONYMOUS 0x20 // do not use a file
 
@@ -12,7 +13,7 @@ typedef struct
     void *start;
 } Segment;
 
-Segment segments[10];
+Segment segments[MAX_SEGMENTS];
 size_t segment_count = 0;
 int segment_init = 1;
 
@@ -40,12 +41,7 @@ void new_segment()
 Segment *latest_segment(size_t size, char *segment_idx)
 {
     size_t remaining_size = SEGMENT_SIZE - segments[segment_count].size;
-    if (segment_count < 1 && segment_init == 1)
-    {
-        new_segment();
-        segment_init = 0;
-    }
-    else if (remaining_size < size)
+    if (remaining_size < size)
     {
         new_segment();
     }
@@ -66,7 +62,7 @@ void get_chunk_props(void *ptr, char *size, char *free, char *index)
 // returns pointer to free space in memory; if the chunk has the desired size
 void *get_free_mem(size_t size)
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < MAX_SEGMENTS; i++)
     {
         Segment segment = segments[i];
         if (segment.size == 0)
@@ -78,7 +74,8 @@ void *get_free_mem(size_t size)
         {
             char chunk_size, free, index;
             get_chunk_props(segment.start + offset, &chunk_size, &free, &index);
-            if (free == 1 && chunk_size <= size) {
+            if (free == 1 && chunk_size <= size)
+            {
                 return segment.start + offset;
             }
             offset += chunk_size;
@@ -93,8 +90,8 @@ void *add_chunk(size_t size, Segment *segment, char segment_idx)
     void *start = segment->start + segment->size;
     char *s = start;
     s[0] = segment_idx;
-    s[1] = 0; // free bit
-    s[2] = size;
+    s[1] = (char)0; // free bit
+    s[2] = (char)size;
     segment->size += size + sizeof(char) * 3;
     segment->chunks += 1;
     return start + sizeof(char) * 3;
@@ -106,9 +103,18 @@ void *malloc(size_t size)
     {
         return NULL;
     }
-    void *free_chunk = get_free_mem(size);
-    if (free_chunk != NULL) {
-        return free_chunk;
+    if (segment_count < 1 && segment_init == 1)
+    {
+        new_segment();
+        segment_init = 0;
+    }
+    else
+    {
+        void *free_chunk = get_free_mem(size);
+        if (free_chunk != NULL)
+        {
+            return free_chunk;
+        }
     }
     char segment_idx;
     Segment *latest = latest_segment(size, &segment_idx);
