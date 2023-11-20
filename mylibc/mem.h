@@ -106,6 +106,10 @@ void *malloc(size_t size)
     {
         return NULL;
     }
+    void *free_chunk = get_free_mem(size);
+    if (free_chunk != NULL) {
+        return free_chunk;
+    }
     char segment_idx;
     Segment *latest = latest_segment(size, &segment_idx);
     return add_chunk(size, latest, segment_idx);
