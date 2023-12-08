@@ -13,6 +13,13 @@ typedef struct
     void *start;
 } Segment;
 
+typedef struct
+{
+    size_t size;
+    char free;
+    char index;
+} Chunk;
+
 Segment segments[MAX_SEGMENTS];
 size_t segment_count = 0;
 int segment_init = 1;
@@ -49,14 +56,13 @@ Segment *latest_segment(size_t size, char *segment_idx)
     return &segments[segment_count];
 }
 
-void get_chunk_props(void *ptr, char *size, char *free, char *index)
+void get_chunk_props(void *ptr, size_t *size, char *free, char *index)
 {
-    char *s = ptr - sizeof(char);
-    char *f = ptr - sizeof(char) * 2;
-    char *i = ptr - sizeof(char) * 3;
-    *size = (char)*s;
-    *free = (char)*f;
-    *index = (char)*i;
+    void *chunk = ptr - sizeof(Chunk);
+    Chunk *c = (Chunk *)chunk;
+    *size = c->size;
+    *free = c->free;
+    *index = c->index;
 }
 
 // returns pointer to free space in memory; if the chunk has the desired size
@@ -72,8 +78,9 @@ void *get_free_mem(size_t size)
         size_t offset = 0;
         for (int j = 0; j < segment.chunks; j++)
         {
-            char chunk_size, free, index;
-            get_chunk_props(segment.start + offset, &chunk_size, &free, &index);
+            size_t chunk_size;
+            char free, index;
+            get_chunk_props(segment.start + offset, &chunk_size, &free, &index); // TODO: fix this addressing
             if (free == 1 && chunk_size <= size)
             {
                 return segment.start + offset;
@@ -88,13 +95,15 @@ void *get_free_mem(size_t size)
 void *add_chunk(size_t size, Segment *segment, char segment_idx)
 {
     void *start = segment->start + segment->size;
-    char *s = start;
-    s[0] = segment_idx;
-    s[1] = (char)0; // free bit
-    s[2] = (char)size;
-    segment->size += size + sizeof(char) * 3;
+    Chunk *chunk = (Chunk *)start;
+
+    chunk->size = size;
+    chunk->index = segment_idx;
+    chunk->free = (char)0;
+
+    segment->size += size + sizeof(Chunk);
     segment->chunks += 1;
-    return start + sizeof(char) * 3;
+    return start + sizeof(Chunk);
 }
 
 void *malloc(size_t size)
@@ -123,12 +132,14 @@ void *malloc(size_t size)
 
 void free(void *ptr)
 {
-    char size, free, index;
+    size_t size;
+    char free, index;
     get_chunk_props(ptr, &size, &free, &index);
     if (free == 1)
         return;
-    char *f = ptr - sizeof(char) * 2;
-    *f = 1;
+    void *chunk = ptr - sizeof(Chunk);
+    Chunk *c = (Chunk *)chunk;
+    c->free = 1;
 }
 
 // void *calloc(size_t nmemb, size_t size);

@@ -36,8 +36,11 @@ int main(void)
     // free(obj);
     // return 0;
 
-    Object *obj = malloc(69);
+    Object *obj = malloc(500);
     free(obj);
+
+    Object *obj2 = malloc(1000);
+    free(obj2);
 
     return 0;
 }
