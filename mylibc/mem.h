@@ -80,7 +80,7 @@ void *get_free_mem(size_t size)
         {
             size_t chunk_size;
             char free, index;
-            get_chunk_props(segment.start + offset, &chunk_size, &free, &index); // TODO: fix this addressing
+            get_chunk_props(segment.start + sizeof(Chunk) + offset, &chunk_size, &free, &index);
             if (free == 1 && chunk_size <= size)
             {
                 return segment.start + offset;
