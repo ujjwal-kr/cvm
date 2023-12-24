@@ -65,6 +65,15 @@ void get_chunk_props(void *ptr, size_t *size, char *free, char *index)
     *index = c->index;
 }
 
+void scan_chunk_props(void *ptr, size_t *size, char *free, char *index)
+{
+    void *chunk = ptr;
+    Chunk *c = (Chunk *)chunk;
+    *size = c->size;
+    *free = c->free;
+    *index = c->index;
+}
+
 // returns pointer to free space in memory; if the chunk has the desired size
 void *get_free_mem(size_t size)
 {
@@ -73,19 +82,27 @@ void *get_free_mem(size_t size)
         Segment segment = segments[i];
         if (segment.size == 0)
         {
-            return segment.start;
+            return segment.start + sizeof(Chunk);
         }
         size_t offset = 0;
         for (int j = 0; j < segment.chunks; j++)
         {
             size_t chunk_size;
             char free, index;
-            get_chunk_props(segment.start + sizeof(Chunk) + offset, &chunk_size, &free, &index);
+            if (j == 0) {
+                scan_chunk_props(segment.start, &chunk_size, &free, &index);
+                if (free == 1 && chunk_size <= size)
+                {
+                    return segment.start + sizeof(Chunk);
+                }
+            } else {
+                get_chunk_props(segment.start + offset, &chunk_size, &free, &index);
+            }
             if (free == 1 && chunk_size <= size)
             {
                 return segment.start + offset;
             }
-            offset += chunk_size;
+            offset += chunk_size + sizeof(Chunk);
         }
     }
     return NULL;
