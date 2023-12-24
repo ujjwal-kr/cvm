@@ -77,7 +77,7 @@ void scan_chunk_props(void *ptr, size_t *size, char *free, char *index)
 // returns pointer to free space in memory; if the chunk has the desired size
 void *get_free_mem(size_t size)
 {
-    for (int i = 0; i < MAX_SEGMENTS; i++)
+    for (int i = 0; i < segment_count; i++)
     {
         Segment segment = segments[i];
         if (segment.size == 0)
