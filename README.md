@@ -24,7 +24,5 @@ Experimenting with the C runtime environment, while trying to reimplement most u
 - fclose
 - fread
 - fwrite
-- fprintf
-- fscanf
 
 A work in progress by [@ujjwal-kr](https://github.com/ujjwal-kr)
