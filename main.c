@@ -4,11 +4,11 @@
 
 int main(void)
 {
-    uint8_t random_bytes[10];
+    uint8_t random_bytes[100];
     getrandom(&random_bytes, sizeof(random_bytes), 0);
-    Object *objs[10];
-    Object *obj = malloc(sizeof(Object) * 10);
-    for (int i = 0; i < 10; i++)
+    Object *objs[100];
+    Object *obj = malloc(sizeof(Object) * 100);
+    for (int i = 0; i < 100; i++)
     {
         assert(obj != NULL);
         (obj + i)->data = malloc(random_bytes[i] + 1);
@@ -18,7 +18,7 @@ int main(void)
         objs[i] = (obj + i);
     }
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 100; i++)
     {
         printf("Pointer to data %d: %p and String: %s", i, (obj + i)->data, (char *)(obj + i)->data);
     }
@@ -29,7 +29,7 @@ int main(void)
     // Object *o = (struct Object *)objs[69];
     // printf("%p\n", o->data);
 
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 100; i++)
     {
         free((obj + i)->data);
     }

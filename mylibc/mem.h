@@ -1,8 +1,8 @@
 #include <stddef.h>
 #include <sys/mman.h>
 
-#define MAX_SEGMENTS 0xa
-#define SEGMENT_SIZE 0x3e80
+#define MAX_SEGMENTS 0xfff
+#define SEGMENT_SIZE 0xffff
 #define MAP_ANONYMOUS 0x20 // do not use a file
 
 typedef struct
@@ -48,7 +48,7 @@ void new_segment()
 Segment *latest_segment(size_t size, char *segment_idx)
 {
     size_t remaining_size = SEGMENT_SIZE - segments[segment_count].size;
-    if (remaining_size < size)
+    if (remaining_size <= size)
     {
         new_segment();
     }
@@ -65,6 +65,7 @@ void get_chunk_props(void *ptr, size_t *size, char *free, char *index)
     *index = c->index;
 }
 
+// scan chunk from beginning
 void scan_chunk_props(void *ptr, size_t *size, char *free, char *index)
 {
     void *chunk = ptr;
@@ -89,13 +90,16 @@ void *get_free_mem(size_t size)
         {
             size_t chunk_size;
             char free, index;
-            if (j == 0) {
+            if (j == 0)
+            {
                 scan_chunk_props(segment.start, &chunk_size, &free, &index);
                 if (free == 1 && chunk_size <= size)
                 {
                     return segment.start + sizeof(Chunk);
                 }
-            } else {
+            }
+            else
+            {
                 get_chunk_props(segment.start + offset, &chunk_size, &free, &index);
             }
             if (free == 1 && chunk_size <= size)
@@ -123,6 +127,7 @@ void *add_chunk(size_t size, Segment *segment, char segment_idx)
     return start + sizeof(Chunk);
 }
 
+// allocates size bytes of memory on the heap
 void *malloc(size_t size)
 {
     if (size > SEGMENT_SIZE)
@@ -147,6 +152,7 @@ void *malloc(size_t size)
     return add_chunk(size, latest, segment_idx);
 }
 
+// frees memory pointed by ptr
 void free(void *ptr)
 {
     size_t size;
