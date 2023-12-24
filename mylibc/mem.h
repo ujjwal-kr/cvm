@@ -169,7 +169,7 @@ void *calloc(size_t nmemb, size_t size) {
     char *ptr = (char *)malloc(nmemb * size);
     for (size_t i = 0; i < nmemb; i++)
     {
-        *ptr[i] = 0;
+        ptr[i] = 0;
     }
     return (void *)ptr;
 }
