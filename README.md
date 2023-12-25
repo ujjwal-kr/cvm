@@ -4,7 +4,7 @@ Experimenting with the C runtime environment, while trying to reimplement most u
 
 ## TODO
 
-### Memory Allocation
+### Memory Allocation [DONE]
 - malloc
 - calloc
 - realloc

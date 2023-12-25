@@ -1,8 +1,9 @@
 #include "main.h"
-#include "mylibc/io.h"
+#include "mylibc/mem.h"
 
 int main(void)
 {
-    int a = 10;
-    printf("Hello world %d\n");
+    void *ok = malloc(1000);
+    void *new_ok = realloc(ok, 1005); 
+    free(ok);
 }
