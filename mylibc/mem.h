@@ -165,7 +165,8 @@ void free(void *ptr)
     c->free = 1;
 }
 
-void *calloc(size_t nmemb, size_t size) {
+void *calloc(size_t nmemb, size_t size)
+{
     char *ptr = (char *)malloc(nmemb * size);
     for (size_t i = 0; i < nmemb; i++)
     {
@@ -174,8 +175,8 @@ void *calloc(size_t nmemb, size_t size) {
     return (void *)ptr;
 }
 
-
-void *realloc(void *ptr, size_t size) {
+void *realloc(void *ptr, size_t size)
+{
     char *new_ptr = malloc(size);
     char *bytes = ptr;
     for (size_t i = 0; i < size; i++)
