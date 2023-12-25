@@ -175,4 +175,13 @@ void *calloc(size_t nmemb, size_t size) {
 }
 
 
-// void *realloc(void *ptr, size_t size);
+void *realloc(void *ptr, size_t size) {
+    char *new_ptr = malloc(size);
+    char *bytes = ptr;
+    for (size_t i = 0; i < size; i++)
+    {
+        new_ptr[i] = bytes[i];
+    }
+    free(ptr);
+    return new_ptr;
+}
