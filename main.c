@@ -1,4 +1,4 @@
-#include "main.h"
+#include <stdio.h>
 #include "mylibc/mem.h"
 
 int main(void)

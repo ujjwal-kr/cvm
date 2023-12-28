@@ -168,7 +168,7 @@ void free(void *ptr)
 void *calloc(size_t nmemb, size_t size)
 {
     char *ptr = (char *)malloc(nmemb * size);
-    for (size_t i = 0; i < nmemb; i++)
+    for (size_t i = 0; i < nmemb * size; i++)
     {
         ptr[i] = 0;
     }
