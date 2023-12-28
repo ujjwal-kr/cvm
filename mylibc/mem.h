@@ -22,7 +22,7 @@ typedef struct
 
 Segment segments[MAX_SEGMENTS];
 size_t segment_count = 0;
-int segment_init = 1;
+size_t segment_init = 1;
 
 void new_segment()
 {
@@ -78,7 +78,7 @@ void scan_chunk_props(void *ptr, size_t *size, char *free, char *index)
 // returns pointer to free space in memory; if the chunk has the desired size
 void *get_free_mem(size_t size)
 {
-    for (int i = 0; i < segment_count; i++)
+    for (size_t i = 0; i < segment_count; i++)
     {
         Segment segment = segments[i];
         if (segment.size == 0)
@@ -86,7 +86,7 @@ void *get_free_mem(size_t size)
             return segment.start + sizeof(Chunk);
         }
         size_t offset = 0;
-        for (int j = 0; j < segment.chunks; j++)
+        for (size_t j = 0; j < segment.chunks; j++)
         {
             size_t chunk_size;
             char free, index;
